@@ -9,14 +9,12 @@ return [
     'plan' => [
         'onetime' => [
             'name' => '일시불',
-            'price' => '₩180,000',
             'detail' => '쿠폰 사용 가능',
         ],
         'installment' => [
             'name' => '12개월 할부',
-            'price' => '₩15,000',
             'price_suffix' => '/월',
-            'detail' => '총 ₩180,000',
+            'detail_prefix' => '총 ₩',
         ],
     ],
 
@@ -36,7 +34,7 @@ return [
         'discount' => '할인',
         'total' => '합계',
         'monthly' => '/월',
-        'monthly_12' => '₩15,000 x 12개월',
+        'monthly_format' => '₩:price x 12개월',
     ],
 
     // 按鈕
@@ -63,7 +61,7 @@ return [
         'onetime_badge' => '일시불 결제',
         'installment_badge' => '12개월 구독',
         'onetime_message' => "결제가 성공적으로 처리되었습니다.\n확인 이메일이 발송되었습니다.\n이용해 주셔서 감사합니다!",
-        'installment_message' => "구독이 활성화되었습니다.\n12개월 동안 매월 ₩15,000이 청구됩니다.\n확인 이메일이 발송되었습니다.",
+        'installment_message' => "구독이 활성화되었습니다.\n12개월 동안 매월 청구됩니다.\n확인 이메일이 발송되었습니다.",
         'back_home' => '홈으로 돌아가기',
     ],
 ];

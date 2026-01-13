@@ -69,15 +69,21 @@ class PaymentController extends Controller
                 $promotionCodes = PromotionCode::all([
                     'code' => $request->coupon_code,
                     'active' => true,
+                    'expand' => ['data.coupon'],
                 ]);
 
                 if (count($promotionCodes->data) > 0) {
                     $promotionCode = $promotionCodes->data[0];
                     $coupon = $promotionCode->coupon;
 
-                    if ($coupon->percent_off) {
+                    // Handle new Stripe API structure
+                    if (!$coupon && isset($promotionCode->promotion->coupon)) {
+                        $coupon = \Stripe\Coupon::retrieve($promotionCode->promotion->coupon);
+                    }
+
+                    if ($coupon && $coupon->percent_off) {
                         $amount = (int) ($amount * (100 - $coupon->percent_off) / 100);
-                    } elseif ($coupon->amount_off) {
+                    } elseif ($coupon && $coupon->amount_off) {
                         $amount = max(0, $amount - $coupon->amount_off);
                     }
                 } else {
@@ -183,6 +189,15 @@ class PaymentController extends Controller
             $promotionCode = $promotionCodes->data[0];
             $coupon = $promotionCode->coupon;
 
+            // Handle new Stripe API structure: coupon ID in promotion.coupon
+            if (!$coupon && isset($promotionCode->promotion->coupon)) {
+                $coupon = \Stripe\Coupon::retrieve($promotionCode->promotion->coupon);
+            }
+
+            if (!$coupon) {
+                return response()->json(['error' => __('payment.message.coupon_invalid')], 400);
+            }
+
             $originalAmount = $tier->one_time_price;
             $discountedAmount = $originalAmount;
 
@@ -201,6 +216,7 @@ class PaymentController extends Controller
                 'amountOff' => $coupon->amount_off,
             ]);
         } catch (\Exception $e) {
+            \Log::error('Coupon error', ['error' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
             return response()->json(['error' => __('payment.message.coupon_error')], 500);
         }
     }

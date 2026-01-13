@@ -9,14 +9,12 @@ return [
     'plan' => [
         'onetime' => [
             'name' => 'One-time Payment',
-            'price' => '₩180,000',
             'detail' => 'Coupon available',
         ],
         'installment' => [
             'name' => '12-Month Plan',
-            'price' => '₩15,000',
             'price_suffix' => '/mo',
-            'detail' => 'Total ₩180,000',
+            'detail_prefix' => 'Total ₩',
         ],
     ],
 
@@ -36,7 +34,7 @@ return [
         'discount' => 'Discount',
         'total' => 'Total',
         'monthly' => '/mo',
-        'monthly_12' => '₩15,000 x 12 months',
+        'monthly_format' => '₩:price x 12 months',
     ],
 
     // Buttons
@@ -63,7 +61,7 @@ return [
         'onetime_badge' => 'One-time Payment',
         'installment_badge' => '12-Month Subscription',
         'onetime_message' => "Your payment has been processed successfully.\nA confirmation email has been sent.\nThank you for your purchase!",
-        'installment_message' => "Your subscription has been activated.\nYou will be charged ₩15,000 monthly for 12 months.\nA confirmation email has been sent.",
+        'installment_message' => "Your subscription has been activated.\nYou will be charged monthly for 12 months.\nA confirmation email has been sent.",
         'back_home' => 'Back to Home',
     ],
 ];

@@ -485,7 +485,7 @@
             complete: "{{ __('payment.button.complete') }}",
             start_subscription: "{{ __('payment.button.start_subscription') }}",
             processing: "{{ __('payment.button.processing') }}",
-            monthly_12: "{{ __('payment.price.monthly_12') }}",
+            monthly_format: "{{ __('payment.price.monthly_format', ['price' => ':price']) }}",
             monthly: "{{ __('payment.price.monthly') }}",
         };
 
@@ -514,7 +514,7 @@
                     document.getElementById('discount-row').style.display = 'none';
                     document.getElementById('coupon-result').style.display = 'none';
                     document.getElementById('coupon').value = '';
-                    document.getElementById('subtotal').textContent = `₩${installmentPrice.toLocaleString()} x 12`;
+                    document.getElementById('subtotal').textContent = i18n.monthly_format.replace(':price', installmentPrice.toLocaleString());
                     document.getElementById('total').textContent = `₩${installmentPrice.toLocaleString()}` + i18n.monthly;
                     btnText.textContent = i18n.subscribe.replace(':amount', installmentPrice.toLocaleString());
                 }
@@ -630,6 +630,7 @@
 
                     elements = stripe.elements({
                         clientSecret,
+                        locale: '{{ app()->getLocale() }}',
                         appearance: {
                             theme: 'stripe',
                             variables: {
