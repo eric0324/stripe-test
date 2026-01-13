@@ -377,6 +377,16 @@
         .legal-disclosure a:hover {
             color: #374151;
         }
+
+        .copyright {
+            position: absolute;
+            left: 0;
+            bottom: -70px;
+            width: 100%;
+            text-align: center;
+            font-size: 11px;
+            color: #9ca3af;
+        }
     </style>
 </head>
 <body>
@@ -459,6 +469,8 @@
         <span class="divider">|</span>
         <a href="/?lang=en" class="{{ app()->getLocale() === 'en' ? 'active' : '' }}">English</a>
     </div>
+
+    <div class="copyright">© 2026 SAT. KNOWLEDGE, KR</div>
     </div>
 
     <script>
