@@ -1,0 +1,46 @@
+services:
+  php:
+    build:
+      context: ./docker/php
+      dockerfile: Dockerfile
+    container_name: stripe-gateway-php
+    restart: unless-stopped
+    volumes:
+      - ./:/var/www/html
+    networks:
+      - stripe-gateway
+
+  nginx:
+    image: nginx:alpine
+    container_name: stripe-gateway-nginx
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    volumes:
+      - ./:/var/www/html
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - php
+    networks:
+      - stripe-gateway
+
+  mysql:
+    image: mysql:8.0
+    container_name: stripe-gateway-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: stripe_gateway
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - stripe-gateway
+
+networks:
+  stripe-gateway:
+    driver: bridge
+
+volumes:
+  mysql_data:
