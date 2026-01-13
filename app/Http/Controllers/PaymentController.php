@@ -8,6 +8,7 @@ use App\Services\TeachableService;
 use Illuminate\Http\Request;
 use Stripe\Stripe;
 use Stripe\Customer;
+use Stripe\Invoice;
 use Stripe\PaymentIntent;
 use Stripe\Price;
 use Stripe\Product;
@@ -131,40 +132,26 @@ class PaymentController extends Controller
                 'email' => $request->email,
             ]);
 
-            // 動態建立 Price
-            $price = Price::create([
-                'unit_amount' => $tier->installment_price,
+            // 用 PaymentIntent 收取第一期款項，並設定未來自動扣款
+            $paymentIntent = PaymentIntent::create([
+                'amount' => $tier->installment_price,
                 'currency' => 'krw',
-                'recurring' => ['interval' => 'month'],
-                'product_data' => [
-                    'name' => $tier->name . ' - Monthly',
-                ],
-            ]);
-
-            $subscription = Subscription::create([
                 'customer' => $customer->id,
-                'items' => [
-                    ['price' => $price->id],
-                ],
-                'payment_behavior' => 'default_incomplete',
-                'payment_settings' => [
-                    'save_default_payment_method' => 'on_subscription',
-                    'payment_method_types' => ['card', 'kakao_pay', 'naver_pay'],
-                ],
-                'expand' => ['latest_invoice.payment_intent'],
-                'cancel_at' => strtotime('+12 months'),
+                'setup_future_usage' => 'off_session',
+                'payment_method_types' => ['card'],
                 'metadata' => [
                     'payment_type' => 'installment',
                     'email' => $request->email,
-                    'total_installments' => 12,
                     'tier_id' => $tier->id,
                     'tier_name' => $tier->name,
+                    'installment_price' => $tier->installment_price,
+                    'create_subscription' => 'true',
                 ],
             ]);
 
             return response()->json([
-                'clientSecret' => $subscription->latest_invoice->payment_intent->client_secret,
-                'subscriptionId' => $subscription->id,
+                'clientSecret' => $paymentIntent->client_secret,
+                'amount' => $tier->installment_price,
             ]);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
@@ -256,9 +243,10 @@ class PaymentController extends Controller
                 // Get email and payment details
                 $email = $paymentIntent->metadata->email ?? null;
                 $paymentType = $paymentIntent->metadata->payment_type ?? '';
+                $createSubscription = $paymentIntent->metadata->create_subscription ?? null;
 
-                // Send Facebook CAPI Purchase event for one-time payment
                 if ($email && $paymentType === 'one_time') {
+                    // Send Facebook CAPI Purchase event for one-time payment
                     $facebook->sendPurchaseEvent([
                         'email' => $email,
                         'value' => $paymentIntent->amount,
@@ -275,6 +263,75 @@ class PaymentController extends Controller
                         'email' => $email,
                         'enrolled' => $enrolled,
                     ]);
+                }
+
+                // Create subscription for installment payments
+                if ($email && $paymentType === 'installment' && $createSubscription === 'true') {
+                    try {
+                        $customerId = $paymentIntent->customer;
+                        $paymentMethodId = $paymentIntent->payment_method;
+                        $installmentPrice = $paymentIntent->metadata->installment_price ?? $paymentIntent->amount;
+                        $tierName = $paymentIntent->metadata->tier_name ?? 'Monthly';
+
+                        // Set the payment method as default for the customer
+                        Customer::update($customerId, [
+                            'invoice_settings' => [
+                                'default_payment_method' => $paymentMethodId,
+                            ],
+                        ]);
+
+                        // Create a recurring price
+                        $price = Price::create([
+                            'unit_amount' => (int) $installmentPrice,
+                            'currency' => 'krw',
+                            'recurring' => ['interval' => 'month'],
+                            'product_data' => [
+                                'name' => $tierName . ' - Monthly',
+                            ],
+                        ]);
+
+                        // Create subscription starting next month (first payment already made)
+                        $subscription = Subscription::create([
+                            'customer' => $customerId,
+                            'items' => [['price' => $price->id]],
+                            'default_payment_method' => $paymentMethodId,
+                            'billing_cycle_anchor' => strtotime('+1 month'),
+                            'proration_behavior' => 'none',
+                            'cancel_at' => strtotime('+12 months'),
+                            'metadata' => [
+                                'email' => $email,
+                                'payment_type' => 'installment',
+                            ],
+                        ]);
+
+                        \Log::info('Subscription created', [
+                            'subscription_id' => $subscription->id,
+                            'customer_id' => $customerId,
+                        ]);
+
+                        // Send Facebook CAPI Purchase event
+                        $facebook->sendPurchaseEvent([
+                            'email' => $email,
+                            'value' => $paymentIntent->amount,
+                            'currency' => strtoupper($paymentIntent->currency),
+                            'order_id' => $paymentIntent->id,
+                            'content_name' => '12-Month Subscription',
+                            'content_type' => 'product',
+                            'action_source' => 'website',
+                        ]);
+
+                        // Enroll user in Teachable
+                        $enrolled = $teachable->createAndEnroll($email);
+                        \Log::info('Teachable enrollment result (subscription)', [
+                            'email' => $email,
+                            'enrolled' => $enrolled,
+                        ]);
+                    } catch (\Exception $e) {
+                        \Log::error('Failed to create subscription', [
+                            'error' => $e->getMessage(),
+                            'payment_intent_id' => $paymentIntent->id,
+                        ]);
+                    }
                 }
                 break;
 
