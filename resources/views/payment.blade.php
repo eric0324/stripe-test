@@ -618,6 +618,40 @@
             setLoading(true);
 
             try {
+                // If elements already exists, go directly to payment confirmation
+                if (elements && clientSecret) {
+                    const returnUrl = successUrl
+                        ? `${successUrl}?type=${currentPlan}`
+                        : `${window.location.origin}/payment/success?type=${currentPlan}`;
+
+                    const { error } = await stripe.confirmPayment({
+                        elements,
+                        confirmParams: {
+                            return_url: returnUrl,
+                            receipt_email: email,
+                            payment_method_data: {
+                                billing_details: {
+                                    email: email,
+                                    address: {
+                                        country: 'KR',
+                                        postal_code: '00000',
+                                        state: '',
+                                        city: '',
+                                        line1: '',
+                                        line2: ''
+                                    }
+                                }
+                            }
+                        }
+                    });
+
+                    if (error) {
+                        showError(error.message);
+                        setLoading(false);
+                    }
+                    return;
+                }
+
                 const endpoint = currentPlan === 'onetime' ? '/payment/intent' : '/payment/subscription';
                 const body = currentPlan === 'onetime'
                     ? { email, coupon_code: document.getElementById('coupon').value.trim() || null }
@@ -693,37 +727,6 @@
 
                     setLoading(false);
                     btnText.textContent = currentPlan === 'onetime' ? i18n.complete : i18n.start_subscription;
-                    return;
-                }
-
-                const returnUrl = successUrl
-                    ? `${successUrl}?type=${currentPlan}`
-                    : `${window.location.origin}/payment/success?type=${currentPlan}`;
-
-                const { error } = await stripe.confirmPayment({
-                    elements,
-                    confirmParams: {
-                        return_url: returnUrl,
-                        receipt_email: email,
-                        payment_method_data: {
-                            billing_details: {
-                                email: email,
-                                address: {
-                                    country: 'KR',
-                                    postal_code: '00000',
-                                    state: '',
-                                    city: '',
-                                    line1: '',
-                                    line2: ''
-                                }
-                            }
-                        }
-                    }
-                });
-
-                if (error) {
-                    showError(error.message);
-                    setLoading(false);
                 }
             } catch (error) {
                 showError(error.message);
