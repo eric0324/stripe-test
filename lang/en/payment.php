@@ -79,4 +79,11 @@ return [
         'installment_message' => "Your subscription has been activated.\nYou will be charged monthly for 12 months.\nA confirmation email has been sent.",
         'back_home' => 'Back to Home',
     ],
+
+    // Failed page
+    'failed' => [
+        'title' => 'Payment Failed',
+        'message' => "There was a problem processing your payment.\nPlease try again.",
+        'back_payment' => 'Try Again',
+    ],
 ];

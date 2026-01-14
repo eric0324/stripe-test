@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ __('payment.success.title') }}</title>
+    <title>{{ ($failed ?? false) ? __('payment.failed.title') : __('payment.success.title') }}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -45,6 +45,28 @@
             justify-content: center;
             margin: 0 auto 24px;
             animation: scaleIn 0.4s ease-out;
+        }
+
+        .failed-icon {
+            width: 64px;
+            height: 64px;
+            background: #ef4444;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            animation: scaleIn 0.4s ease-out;
+        }
+
+        .failed-icon svg {
+            width: 32px;
+            height: 32px;
+            stroke: white;
+            stroke-width: 3;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
         }
 
         .success-icon svg {
@@ -125,23 +147,36 @@
 </head>
 <body>
     <div class="container">
-        <div class="success-icon">
-            <svg viewBox="0 0 24 24">
-                <polyline points="20 6 9 17 4 12"></polyline>
-            </svg>
-        </div>
+        @if($failed ?? false)
+            <div class="failed-icon">
+                <svg viewBox="0 0 24 24">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </div>
 
-        <h1>{{ __('payment.success.title') }}</h1>
-
-        @if($paymentType === 'installment')
-            <div class="badge">{{ __('payment.success.installment_badge') }}</div>
-            <p class="message">{{ __('payment.success.installment_message') }}</p>
+            <h1>{{ __('payment.failed.title') }}</h1>
+            <p class="message">{{ __('payment.failed.message') }}</p>
+            <a href="/" class="back-btn">{{ __('payment.failed.back_payment') }}</a>
         @else
-            <div class="badge">{{ __('payment.success.onetime_badge') }}</div>
-            <p class="message">{{ __('payment.success.onetime_message') }}</p>
-        @endif
+            <div class="success-icon">
+                <svg viewBox="0 0 24 24">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+            </div>
 
-        <a href="/" class="back-btn">{{ __('payment.success.back_home') }}</a>
+            <h1>{{ __('payment.success.title') }}</h1>
+
+            @if($paymentType === 'installment')
+                <div class="badge">{{ __('payment.success.installment_badge') }}</div>
+                <p class="message">{{ __('payment.success.installment_message') }}</p>
+            @else
+                <div class="badge">{{ __('payment.success.onetime_badge') }}</div>
+                <p class="message">{{ __('payment.success.onetime_message') }}</p>
+            @endif
+
+            <a href="/" class="back-btn">{{ __('payment.success.back_home') }}</a>
+        @endif
     </div>
 </body>
 </html>

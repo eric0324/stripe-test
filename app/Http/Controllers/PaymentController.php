@@ -227,8 +227,38 @@ class PaymentController extends Controller
             app()->setLocale(session('locale'));
         }
 
+        // Check the redirect_status from Stripe
+        $redirectStatus = $request->query('redirect_status');
+        $paymentIntentId = $request->query('payment_intent');
+
+        // If redirect_status is not 'succeeded', show failed page
+        if ($redirectStatus && $redirectStatus !== 'succeeded') {
+            return view('success', [
+                'paymentType' => $request->query('type', 'one_time'),
+                'failed' => true,
+            ]);
+        }
+
+        // If payment_intent exists, verify the payment status
+        if ($paymentIntentId) {
+            try {
+                $paymentIntent = PaymentIntent::retrieve($paymentIntentId);
+
+                // Check if payment actually succeeded
+                if ($paymentIntent->status !== 'succeeded') {
+                    return view('success', [
+                        'paymentType' => $request->query('type', 'one_time'),
+                        'failed' => true,
+                    ]);
+                }
+            } catch (\Exception $e) {
+                \Log::error('Failed to verify payment', ['error' => $e->getMessage()]);
+            }
+        }
+
         return view('success', [
             'paymentType' => $request->query('type', 'one_time'),
+            'failed' => false,
         ]);
     }
 
