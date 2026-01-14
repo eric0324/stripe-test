@@ -165,6 +165,14 @@
             font-size: 12px;
         }
 
+        .plan-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+
         .plan-selector {
             display: flex;
             gap: 12px;
@@ -440,6 +448,8 @@
             <h1>{{ __('payment.title') }}</h1>
             <p class="subtitle">{{ __('payment.subtitle') }}</p>
         </div>
+
+        <div class="plan-title">{{ __('payment.course_title') }}</div>
 
         <div class="plan-selector">
             <label class="plan-option selected" id="plan-onetime">

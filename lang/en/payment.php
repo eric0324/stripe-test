@@ -4,6 +4,7 @@ return [
     // Page title
     'title' => 'Full Body Line Remodeling Project',
     'subtitle' => 'Choose your payment method',
+    'course_title' => 'VOD 12-Month Course Pass',
     'course_info' => [
         '36 chapters · 20 hours · Pre-recorded VOD lectures',
         'This course is offered as a pre-order, with videos uploaded sequentially',
