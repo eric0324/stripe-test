@@ -223,14 +223,16 @@
         }
 
         .plan-discount {
-            font-size: 10px;
+            font-size: 13px;
+            font-weight: 600;
             color: #ef4444;
-            margin-top: 4px;
+            margin-top: 6px;
         }
 
         .plan-discount .original-price {
             text-decoration: line-through;
             color: #9ca3af;
+            font-weight: 500;
         }
 
         .plan-detail {
