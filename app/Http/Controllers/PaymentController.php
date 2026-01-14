@@ -103,7 +103,7 @@ class PaymentController extends Controller
                 'amount' => $amount,
                 'currency' => 'krw',
                 'customer' => $customer->id,
-                'payment_method_types' => ['card', 'kakao_pay', 'naver_pay'],
+                'payment_method_types' => ['kakao_pay', 'naver_pay'],
                 'metadata' => [
                     'payment_type' => 'one_time',
                     'email' => $request->email,
@@ -144,7 +144,7 @@ class PaymentController extends Controller
                 'currency' => 'krw',
                 'customer' => $customer->id,
                 'setup_future_usage' => 'off_session',
-                'payment_method_types' => ['card', 'kakao_pay', 'naver_pay'],
+                'payment_method_types' => ['kakao_pay', 'naver_pay'],
                 'metadata' => [
                     'payment_type' => 'installment',
                     'email' => $request->email,
