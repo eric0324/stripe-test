@@ -469,13 +469,13 @@
                 <input type="radio" name="plan" value="onetime" checked>
                 <div class="plan-name">{{ __('payment.plan.onetime.name') }}</div>
                 <div class="plan-price">₩{{ number_format($tier->one_time_price) }}</div>
-                <div class="plan-discount">-80% <span class="original-price">900,000 원</span></div>
+                <div class="plan-discount">-{{ round((1 - $tier->one_time_price / 900000) * 100) }}% <span class="original-price">900,000 원</span></div>
             </label>
             <label class="plan-option" id="plan-installment">
                 <input type="radio" name="plan" value="installment">
                 <div class="plan-name">{{ __('payment.plan.installment.name') }}</div>
                 <div class="plan-price">₩{{ number_format($tier->installment_price) }}<span class="plan-price-suffix">{{ __('payment.plan.installment.price_suffix') }}</span></div>
-                <div class="plan-discount">-80% <span class="original-price">900,000 원</span></div>
+                <div class="plan-discount">-{{ round((1 - ($tier->installment_price * 12) / 900000) * 100) }}% <span class="original-price">900,000 원</span></div>
             </label>
         </div>
 
