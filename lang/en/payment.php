@@ -2,8 +2,10 @@
 
 return [
     // Page title
-    'title' => 'Payment',
+    'title' => 'Full Body Line Remodeling Project',
     'subtitle' => 'Choose your payment method',
+    'course_info' => "・36 chapters · 20 hours · Pre-recorded VOD lectures\n・This course is offered as a pre-order, with videos uploaded sequentially\n※ All lectures scheduled to be completed by February 15, 2026\n・Unlimited viewing for 1 year from purchase date",
+    'upload_schedule' => "This course is offered as a pre-order, with videos uploaded sequentially:\n・CH0, CH1, CH2, CH3: Uploaded, available now\n・CH3 Practice Video: Scheduled for 2026/1/15\n・CH4 + CH4 Practice Video: Scheduled for 2026/1/30\n・CH5, CH6: Scheduled for 2026/2/15",
 
     // Plan selection
     'plan' => [

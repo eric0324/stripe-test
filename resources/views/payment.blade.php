@@ -85,6 +85,30 @@
             font-size: 14px;
         }
 
+        .course-info {
+            background: #f9fafb;
+            border-left: 3px solid #3b82f6;
+            padding: 16px;
+            margin: 20px 0;
+            color: #374151;
+            font-size: 13px;
+            line-height: 1.8;
+            white-space: pre-line;
+            border-radius: 4px;
+        }
+
+        .upload-schedule {
+            background: #fffbeb;
+            border-left: 3px solid #f59e0b;
+            padding: 16px;
+            margin: 16px 0;
+            color: #92400e;
+            font-size: 12px;
+            line-height: 1.8;
+            white-space: pre-line;
+            border-radius: 4px;
+        }
+
         .lang-switch {
             display: flex;
             justify-content: center;
@@ -397,6 +421,8 @@
             <p class="subtitle">{{ __('payment.subtitle') }}</p>
         </div>
 
+        <div class="course-info">{{ __('payment.course_info') }}</div>
+
         <div class="plan-selector">
             <label class="plan-option selected" id="plan-onetime">
                 <input type="radio" name="plan" value="onetime" checked>
@@ -447,6 +473,8 @@
             <button type="submit" class="submit-btn" id="submit-btn">
                 <span id="btn-text">{{ __('payment.button.pay', ['amount' => number_format($tier->one_time_price)]) }}</span>
             </button>
+
+            <div class="upload-schedule">{{ __('payment.upload_schedule') }}</div>
 
             <div class="error-message" id="error-message" style="display: none;"></div>
 
