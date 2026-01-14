@@ -87,26 +87,46 @@
 
         .course-info {
             background: #f9fafb;
-            border-left: 3px solid #3b82f6;
+            border-left: 3px solid #9ca3af;
             padding: 16px;
             margin: 20px 0;
             color: #374151;
             font-size: 13px;
             line-height: 1.8;
-            white-space: pre-line;
             border-radius: 4px;
         }
 
+        .course-info ol {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .course-info li {
+            margin-bottom: 4px;
+        }
+
         .upload-schedule {
-            background: #fffbeb;
-            border-left: 3px solid #f59e0b;
+            background: #f9fafb;
+            border-left: 3px solid #9ca3af;
             padding: 16px;
             margin: 16px 0;
-            color: #92400e;
+            color: #374151;
             font-size: 12px;
             line-height: 1.8;
-            white-space: pre-line;
             border-radius: 4px;
+        }
+
+        .upload-schedule ol {
+            margin: 8px 0 0 0;
+            padding-left: 20px;
+        }
+
+        .upload-schedule li {
+            margin-bottom: 4px;
+        }
+
+        .upload-schedule p {
+            margin: 0 0 8px 0;
         }
 
         .lang-switch {
@@ -421,8 +441,6 @@
             <p class="subtitle">{{ __('payment.subtitle') }}</p>
         </div>
 
-        <div class="course-info">{{ __('payment.course_info') }}</div>
-
         <div class="plan-selector">
             <label class="plan-option selected" id="plan-onetime">
                 <input type="radio" name="plan" value="onetime" checked>
@@ -436,6 +454,14 @@
                 <div class="plan-price">₩{{ number_format($tier->installment_price) }}<span class="plan-price-suffix">{{ __('payment.plan.installment.price_suffix') }}</span></div>
                 <div class="plan-detail">{{ __('payment.price.total') }} ₩{{ number_format($tier->installment_price * 12) }}</div>
             </label>
+        </div>
+
+        <div class="course-info">
+            <ol>
+                @foreach(__('payment.course_info') as $item)
+                    <li>{{ $item }}</li>
+                @endforeach
+            </ol>
         </div>
 
         <form id="payment-form">
@@ -474,7 +500,14 @@
                 <span id="btn-text">{{ __('payment.button.pay', ['amount' => number_format($tier->one_time_price)]) }}</span>
             </button>
 
-            <div class="upload-schedule">{{ __('payment.upload_schedule') }}</div>
+            <div class="upload-schedule">
+                <p>{{ __('payment.upload_schedule.title') }}</p>
+                <ol>
+                    @foreach(__('payment.upload_schedule.items') as $item)
+                        <li>{{ $item }}</li>
+                    @endforeach
+                </ol>
+            </div>
 
             <div class="error-message" id="error-message" style="display: none;"></div>
 
