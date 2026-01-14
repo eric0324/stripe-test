@@ -782,7 +782,8 @@
                             billingDetails: {
                                 address: 'never'
                             }
-                        }
+                        },
+                        paymentMethodOrder: ['kakao_pay', 'naver_pay']
                     });
                     paymentElement.mount('#payment-element');
 
