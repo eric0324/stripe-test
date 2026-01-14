@@ -97,6 +97,7 @@ class PaymentController extends Controller
         try {
             $customer = Customer::create([
                 'email' => $request->email,
+                'preferred_locales' => [app()->getLocale()],
             ]);
 
             $paymentIntent = PaymentIntent::create([
@@ -136,6 +137,7 @@ class PaymentController extends Controller
         try {
             $customer = Customer::create([
                 'email' => $request->email,
+                'preferred_locales' => [app()->getLocale()],
             ]);
 
             // 用 PaymentIntent 收取第一期款項，並設定未來自動扣款
