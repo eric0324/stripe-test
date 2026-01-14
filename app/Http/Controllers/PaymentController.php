@@ -144,7 +144,7 @@ class PaymentController extends Controller
                 'currency' => 'krw',
                 'customer' => $customer->id,
                 'setup_future_usage' => 'off_session',
-                'payment_method_types' => ['card'],
+                'payment_method_types' => ['card', 'kakao_pay', 'naver_pay'],
                 'metadata' => [
                     'payment_type' => 'installment',
                     'email' => $request->email,
