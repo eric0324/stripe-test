@@ -38,6 +38,7 @@ return [
     "form" => [
         "email" => "이메일",
         "email_placeholder" => "example@email.com",
+        "email_hint" => "gmail 사용을 권장합니다. 일부 이메일 도메인은 수신이 어려울 수 있습니다(예: icloud 등)",
         "coupon" => "쿠폰 코드",
         "coupon_placeholder" => "쿠폰 코드를 입력하세요",
         "apply" => "적용",

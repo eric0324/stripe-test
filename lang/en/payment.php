@@ -38,6 +38,7 @@ return [
     'form' => [
         'email' => 'Email',
         'email_placeholder' => 'example@email.com',
+        'email_hint' => 'We recommend using Gmail. Some email domains may have delivery issues (e.g., iCloud).',
         'coupon' => 'Coupon Code',
         'coupon_placeholder' => 'Enter coupon code',
         'apply' => 'Apply',

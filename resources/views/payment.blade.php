@@ -497,7 +497,7 @@
             <div class="form-group">
                 <label for="email">{{ __('payment.form.email') }}</label>
                 <input type="email" id="email" name="email" required placeholder="{{ __('payment.form.email_placeholder') }}">
-                <p class="email-hint">gmail 사용을 권장합니다. 일부 이메일 도메인은 수신이 어려울 수 있습니다(예: icloud 등)</p>
+                <p class="email-hint">{{ __('payment.form.email_hint') }}</p>
             </div>
 
             <div class="form-group coupon-section show" id="coupon-section">
