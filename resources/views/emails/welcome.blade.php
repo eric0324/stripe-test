@@ -86,7 +86,7 @@
                     <tr>
                         <td style="padding-top: 32px; text-align: center;">
                             <p style="margin: 0 0 4px; color: #9ca3af; font-size: 12px;">
-                                새트놀로지 주식회사 · SAT.KNOWLEDGE
+                                SAT. KNOWLEDGE (지식위성) 고객지원팀 드림
                             </p>
                             <p style="margin: 0; color: #9ca3af; font-size: 11px;">
                                 © {{ date('Y') }} SAT.KNOWLEDGE, KR
