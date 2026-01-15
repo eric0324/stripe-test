@@ -277,7 +277,7 @@
         }
 
         .email-hint {
-            margin-top: 6px;
+            margin-bottom: 6px;
             font-size: 12px;
             color: #6b7280;
         }
@@ -496,8 +496,8 @@
         <form id="payment-form">
             <div class="form-group">
                 <label for="email">{{ __('payment.form.email') }}</label>
-                <input type="email" id="email" name="email" required placeholder="{{ __('payment.form.email_placeholder') }}">
                 <p class="email-hint">{{ __('payment.form.email_hint') }}</p>
+                <input type="email" id="email" name="email" required placeholder="{{ __('payment.form.email_placeholder') }}">
             </div>
 
             <div class="form-group coupon-section show" id="coupon-section">
