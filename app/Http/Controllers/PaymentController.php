@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\WelcomeEmail;
 use App\Models\PricingTier;
 use App\Services\FacebookService;
 use App\Services\TeachableService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Stripe\Stripe;
 use Stripe\Customer;
 use Stripe\Invoice;
@@ -311,6 +313,9 @@ class PaymentController extends Controller
                         'email' => $email,
                         'enrolled' => $enrolled,
                     ]);
+
+                    // Send welcome email
+                    $this->sendWelcomeEmail($email, $paymentIntent->customer);
                 }
 
                 // Create subscription for installment payments
@@ -374,6 +379,9 @@ class PaymentController extends Controller
                             'email' => $email,
                             'enrolled' => $enrolled,
                         ]);
+
+                        // Send welcome email
+                        $this->sendWelcomeEmail($email, $customerId);
                     } catch (\Exception $e) {
                         \Log::error('Failed to create subscription', [
                             'error' => $e->getMessage(),
@@ -419,5 +427,34 @@ class PaymentController extends Controller
         }
 
         return response()->json(['status' => 'success']);
+    }
+
+    /**
+     * Send welcome email to customer with locale from Stripe customer preferences
+     */
+    private function sendWelcomeEmail(string $email, string $customerId): void
+    {
+        try {
+            $customer = Customer::retrieve($customerId);
+            $preferredLocales = $customer->preferred_locales ?? [];
+            $locale = $preferredLocales[0] ?? 'ko';
+
+            // Ensure locale is supported, default to Korean
+            if (!in_array($locale, ['en', 'ko'])) {
+                $locale = 'ko';
+            }
+
+            Mail::to($email)->send(new WelcomeEmail($email, $locale));
+
+            \Log::info('Welcome email sent', [
+                'email' => $email,
+                'locale' => $locale,
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Failed to send welcome email', [
+                'email' => $email,
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 }
