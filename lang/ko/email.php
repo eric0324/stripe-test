@@ -6,7 +6,7 @@ return [
         'title' => '강의 구매를 환영합니다!',
         'greeting' => '안녕하세요, 수강생님',
         'purchase_success' => '축하합니다! 구매가 성공적으로 완료되었습니다. 지금 바로 Teachable에 로그인하여 강의를 시청하실 수 있습니다.',
-        'cta_button' => 'Teachable 로그인하기',
+        'cta_button' => '강의 보러 가기',
         'login_guide_title' => '로그인 안내',
         'login_step_1' => '구매 시 입력하신 이메일로 로그인해 주세요',
         'login_step_2' => '이메일로 발송된 일회용 인증 코드(OTP)를 입력하여 인증을 완료해 주세요',
