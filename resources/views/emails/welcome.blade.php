@@ -18,8 +18,8 @@
                         <td align="center" style="padding-bottom: 24px;">
                             <img src="{{ $message->embed(public_path('images/logo.jpg')) }}"
                                  alt="SAT.KNOWLEDGE"
-                                 width="120"
-                                 style="display: block; max-width: 120px; height: auto;">
+                                 width="240"
+                                 style="display: block; max-width: 240px; height: auto;">
                         </td>
                     </tr>
 
