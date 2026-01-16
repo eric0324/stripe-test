@@ -18,12 +18,12 @@
     'https://connect.facebook.net/en_US/fbevents.js');
     fbq('init', '{{ $fbPixelId }}');
     fbq('track', 'PageView');
-    @if(!($failed ?? false) && ($amount ?? 0) > 0)
+    @if(!($failed ?? false))
     fbq('track', 'Purchase', {
-        value: {{ $amount }},
+        value: {{ $amount ?? 0 }},
         currency: '{{ $currency ?? "KRW" }}',
         content_type: 'product',
-        content_name: '{{ $paymentType === "installment" ? "12-Month Subscription" : "One-time Payment" }}'
+        content_name: '{{ ($paymentType ?? "onetime") === "installment" ? "12-Month Subscription" : "One-time Payment" }}'
     });
     @endif
     </script>

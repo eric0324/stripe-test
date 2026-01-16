@@ -650,6 +650,14 @@
             });
         });
 
+        // Track initial AddToCart event on page load (default plan is selected)
+        trackFbEvent('AddToCart', {
+            value: oneTimePrice,
+            currency: 'KRW',
+            content_type: 'product',
+            content_name: 'One-time Payment'
+        });
+
         // Apply coupon
         document.getElementById('apply-coupon').addEventListener('click', async function() {
             const couponCode = document.getElementById('coupon').value.trim();
