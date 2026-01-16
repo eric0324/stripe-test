@@ -13,6 +13,16 @@
                 <!-- Main Container -->
                 <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="max-width: 520px; background-color: #ffffff;">
 
+                    <!-- Logo -->
+                    <tr>
+                        <td align="center" style="padding-bottom: 24px;">
+                            <img src="{{ $message->embed(public_path('images/logo.jpg')) }}"
+                                 alt="SAT.KNOWLEDGE"
+                                 width="120"
+                                 style="display: block; max-width: 120px; height: auto;">
+                        </td>
+                    </tr>
+
                     <!-- Header -->
                     <tr>
                         <td style="padding-bottom: 32px; border-bottom: 1px solid #e5e7eb;">
