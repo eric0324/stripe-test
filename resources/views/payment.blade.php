@@ -634,6 +634,14 @@
                     btnText.textContent = i18n.subscribe.replace(':amount', installmentPrice.toLocaleString());
                 }
 
+                // Track AddToCart event when plan is selected
+                trackFbEvent('AddToCart', {
+                    value: currentPlan === 'onetime' ? oneTimePrice : installmentPrice,
+                    currency: 'KRW',
+                    content_type: 'product',
+                    content_name: currentPlan === 'onetime' ? 'One-time Payment' : '12-Month Subscription'
+                });
+
                 if (elements) {
                     document.getElementById('payment-element').innerHTML = '';
                     elements = null;

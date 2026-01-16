@@ -240,10 +240,15 @@ class PaymentController extends Controller
             return view('success', [
                 'paymentType' => $request->query('type', 'one_time'),
                 'failed' => true,
+                'fbPixelId' => config('services.facebook.pixel_id'),
+                'amount' => 0,
+                'currency' => 'KRW',
             ]);
         }
 
         // If payment_intent exists, verify the payment status
+        $amount = 0;
+        $currency = 'KRW';
         if ($paymentIntentId) {
             try {
                 $paymentIntent = PaymentIntent::retrieve($paymentIntentId);
@@ -253,8 +258,14 @@ class PaymentController extends Controller
                     return view('success', [
                         'paymentType' => $request->query('type', 'one_time'),
                         'failed' => true,
+                        'fbPixelId' => config('services.facebook.pixel_id'),
+                        'amount' => 0,
+                        'currency' => 'KRW',
                     ]);
                 }
+
+                $amount = $paymentIntent->amount;
+                $currency = strtoupper($paymentIntent->currency);
             } catch (\Exception $e) {
                 \Log::error('Failed to verify payment', ['error' => $e->getMessage()]);
             }
@@ -263,6 +274,9 @@ class PaymentController extends Controller
         return view('success', [
             'paymentType' => $request->query('type', 'one_time'),
             'failed' => false,
+            'fbPixelId' => config('services.facebook.pixel_id'),
+            'amount' => $amount,
+            'currency' => $currency,
         ]);
     }
 
