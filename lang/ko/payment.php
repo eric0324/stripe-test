@@ -56,9 +56,9 @@ return [
 
     // 按鈕
     "button" => [
-        "pay" => "₩:amount 결제하기",
+        "pay" => "장바구니 담기 및 결제 방식 선택",
         "subscribe" => "월 ₩:amount 구독 시작",
-        "complete" => "결제 완료",
+        "complete" => "혜택가로 구매하기",
         "start_subscription" => "구독 시작",
         "processing" => "처리 중...",
     ],

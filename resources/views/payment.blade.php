@@ -727,6 +727,17 @@
             try {
                 // If elements already exists, go directly to payment confirmation
                 if (elements && clientSecret) {
+                    // Track InitiateCheckout event when user clicks final payment button
+                    const checkoutValue = currentPlan === 'onetime'
+                        ? (originalAmount - discountAmount)
+                        : installmentPrice;
+                    trackFbEvent('InitiateCheckout', {
+                        value: checkoutValue,
+                        currency: 'KRW',
+                        content_type: 'product',
+                        content_name: currentPlan === 'onetime' ? 'One-time Payment' : '12-Month Subscription'
+                    });
+
                     const returnUrl = successUrl
                         ? `${successUrl}?type=${currentPlan}`
                         : `${window.location.origin}/payment/success?type=${currentPlan}`;
@@ -782,17 +793,6 @@
                 clientSecret = data.clientSecret;
 
                 if (!elements) {
-                    // Track InitiateCheckout event
-                    const checkoutValue = currentPlan === 'onetime'
-                        ? (originalAmount - discountAmount)
-                        : installmentPrice;
-                    trackFbEvent('InitiateCheckout', {
-                        value: checkoutValue,
-                        currency: 'KRW',
-                        content_type: 'product',
-                        content_name: currentPlan === 'onetime' ? 'One-time Payment' : '12-Month Subscription'
-                    });
-
                     elements = stripe.elements({
                         clientSecret,
                         locale: '{{ app()->getLocale() }}',

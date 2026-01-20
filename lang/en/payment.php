@@ -56,9 +56,9 @@ return [
 
     // Buttons
     'button' => [
-        'pay' => 'Pay ₩:amount',
+        'pay' => 'Add to Cart & Select Payment Method',
         'subscribe' => 'Subscribe ₩:amount/mo',
-        'complete' => 'Complete Payment',
+        'complete' => 'Buy at Special Price',
         'start_subscription' => 'Start Subscription',
         'processing' => 'Processing...',
     ],
