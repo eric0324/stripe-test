@@ -550,7 +550,7 @@
             </div>
 
             <div class="legal-disclosure">
-                This transaction is processed by NICEPAY in accordance with its <a href="https://www.nicepay.co.kr/terms/service.do" target="_blank" rel="noopener">terms of service</a>.
+                This transaction is processed by NICEPAY in accordance with its <a href="https://www.nicepay.co.kr/cs/terms/policy1.do" target="_blank" rel="noopener">terms of service</a>.
             </div>
         </form>
     </div>
