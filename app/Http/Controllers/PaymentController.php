@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Mail\WelcomeEmail;
+use App\Models\Order;
 use App\Models\PricingTier;
 use App\Services\FacebookService;
 use App\Services\TeachableService;
@@ -64,7 +65,9 @@ class PaymentController extends Controller
             return response()->json(['error' => 'No active pricing tier'], 400);
         }
 
-        $amount = $tier->one_time_price;
+        $originalAmount = $tier->one_time_price;
+        $amount = $originalAmount;
+        $couponCode = null;
 
         if ($request->coupon_code) {
             try {
@@ -84,10 +87,12 @@ class PaymentController extends Controller
                     }
 
                     if ($coupon && $coupon->percent_off) {
-                        $amount = (int) ($amount * (100 - $coupon->percent_off) / 100);
+                        $amount = (int) ($originalAmount * (100 - $coupon->percent_off) / 100);
                     } elseif ($coupon && $coupon->amount_off) {
-                        $amount = max(0, $amount - $coupon->amount_off);
+                        $amount = max(0, $originalAmount - $coupon->amount_off);
                     }
+
+                    $couponCode = $request->coupon_code;
                 } else {
                     return response()->json(['error' => __('payment.message.coupon_invalid')], 400);
                 }
@@ -102,17 +107,25 @@ class PaymentController extends Controller
                 'preferred_locales' => [app()->getLocale()],
             ]);
 
+            $metadata = [
+                'payment_type' => 'one_time',
+                'email' => $request->email,
+                'tier_id' => $tier->id,
+                'tier_name' => $tier->name,
+                'original_amount' => $originalAmount,
+                'discount_amount' => $originalAmount - $amount,
+            ];
+
+            if ($couponCode) {
+                $metadata['coupon_code'] = $couponCode;
+            }
+
             $paymentIntent = PaymentIntent::create([
                 'amount' => $amount,
                 'currency' => 'krw',
                 'customer' => $customer->id,
                 'payment_method_types' => ['kakao_pay', 'naver_pay'],
-                'metadata' => [
-                    'payment_type' => 'one_time',
-                    'email' => $request->email,
-                    'tier_id' => $tier->id,
-                    'tier_name' => $tier->name,
-                ],
+                'metadata' => $metadata,
             ]);
 
             return response()->json([
@@ -309,6 +322,9 @@ class PaymentController extends Controller
                 $paymentType = $paymentIntent->metadata->payment_type ?? '';
                 $createSubscription = $paymentIntent->metadata->create_subscription ?? null;
 
+                // 記錄訂單到資料庫
+                $this->recordOrder($paymentIntent);
+
                 if ($email && $paymentType === 'one_time') {
                     // Send Facebook CAPI Purchase event for one-time payment
                     $facebook->sendPurchaseEvent([
@@ -441,6 +457,56 @@ class PaymentController extends Controller
         }
 
         return response()->json(['status' => 'success']);
+    }
+
+    public function couponStats()
+    {
+        $stats = Order::whereNotNull('coupon_code')
+            ->selectRaw('coupon_code, count(*) as usage_count')
+            ->groupBy('coupon_code')
+            ->get();
+
+        return response()->json($stats);
+    }
+
+    /**
+     * Record order to database
+     */
+    private function recordOrder($paymentIntent): void
+    {
+        try {
+            $metadata = $paymentIntent->metadata;
+
+            // 計算原價和折扣（單次付款有記錄，分期付款沒有折扣）
+            $originalAmount = (int) ($metadata->original_amount ?? $paymentIntent->amount);
+            $discountAmount = (int) ($metadata->discount_amount ?? 0);
+
+            Order::create([
+                'stripe_payment_intent_id' => $paymentIntent->id,
+                'stripe_customer_id' => $paymentIntent->customer,
+                'email' => $metadata->email ?? '',
+                'payment_type' => $metadata->payment_type ?? 'unknown',
+                'tier_id' => $metadata->tier_id ?? null,
+                'tier_name' => $metadata->tier_name ?? null,
+                'original_amount' => $originalAmount,
+                'discount_amount' => $discountAmount,
+                'final_amount' => $paymentIntent->amount,
+                'coupon_code' => $metadata->coupon_code ?? null,
+                'currency' => strtoupper($paymentIntent->currency),
+                'status' => 'succeeded',
+            ]);
+
+            \Log::info('Order recorded', [
+                'payment_intent_id' => $paymentIntent->id,
+                'email' => $metadata->email ?? '',
+                'coupon_code' => $metadata->coupon_code ?? null,
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Failed to record order', [
+                'payment_intent_id' => $paymentIntent->id,
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 
     /**

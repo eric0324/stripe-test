@@ -8,4 +8,5 @@ Route::post('/payment/intent', [PaymentController::class, 'createPaymentIntent']
 Route::post('/payment/subscription', [PaymentController::class, 'createSubscription']);
 Route::post('/payment/coupon', [PaymentController::class, 'applyCoupon']);
 Route::get('/payment/success', [PaymentController::class, 'success'])->name('payment.success');
+Route::get('/api/coupon-stats', [PaymentController::class, 'couponStats']);
 Route::post('/webhook/stripe', [PaymentController::class, 'webhook']);
